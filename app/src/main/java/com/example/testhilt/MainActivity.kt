@@ -10,6 +10,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.components.ActivityComponent
 import javax.inject.Inject
+import javax.inject.Qualifier
 
 @AndroidEntryPoint      //将依赖项注入 Android 类
 class MainActivity : AppCompatActivity() {
@@ -19,6 +20,9 @@ class MainActivity : AppCompatActivity() {
     @Inject lateinit var chinaCar:ChinaCar
 
     @Inject lateinit var dog:Dog
+
+    @Inject @MadeInCN lateinit var chinaCarTest1:ChinaCar
+    @Inject @MadeInUSA lateinit var chinaCar2Test2:ChinaCar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,6 +40,48 @@ class MainActivity : AppCompatActivity() {
         Log.e("TAG", "chinaCar.name: ${chinaCar.name}")
 
         Log.e("TAG", "dog.name: "+dog.name )
+
+        Log.e("TAG", "chinaCarTest1: $chinaCarTest1")
+        chinaCarTest1.engine.on()       //ChinaEngine on
+        chinaCarTest1.engine.off()      //ChinaEngine off
+        Log.e("TAG", "chinaCarTest2: $chinaCar2Test2")
+        chinaCar2Test2.engine.on()      //AmericaEngine on
+        chinaCar2Test2.engine.off()     //AmericaEngine off
+    }
+}
+
+@Qualifier
+@Retention(AnnotationRetention.RUNTIME)
+annotation class MadeInCN
+
+@Qualifier
+@Retention(AnnotationRetention.RUNTIME)
+annotation class MadeInUSA
+
+class AmericaEngine @Inject constructor():Engine{
+    override fun on() {
+        Log.e("zrm", "AmericaEngine on")
+    }
+    override fun off() {
+        Log.e("zrm", "AmericaEngine off")
+    }
+}
+
+@Module
+@InstallIn(ActivityComponent::class)
+class CarModule {
+    @Provides
+    @MadeInCN
+    fun provideChinaCar():ChinaCar
+    {
+        return ChinaCar(ChinaEngine())
+    }
+
+    @Provides
+    @MadeInUSA
+    fun provideChinaCar2():ChinaCar
+    {
+        return ChinaCar(AmericaEngine())
     }
 }
 
