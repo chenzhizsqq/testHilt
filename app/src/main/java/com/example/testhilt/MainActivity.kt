@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import dagger.Binds
 import dagger.Module
+import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.components.ActivityComponent
@@ -16,6 +17,8 @@ class MainActivity : AppCompatActivity() {
     @Inject lateinit var user:User//定义一个User对象
 
     @Inject lateinit var chinaCar:ChinaCar
+
+    @Inject lateinit var dog:Dog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,7 +34,19 @@ class MainActivity : AppCompatActivity() {
         chinaCar.engine.on()
         chinaCar.engine.off()
         Log.e("TAG", "chinaCar.name: ${chinaCar.name}")
+
+        Log.e("TAG", "dog.name: "+dog.name )
     }
+}
+
+data class Dog(val name:String)
+
+@Module
+@InstallIn(ActivityComponent::class)
+class DogModule
+{
+    @Provides
+    fun provideDog()=Dog("京巴犬")
 }
 
 //创建@Inject 结构的class
