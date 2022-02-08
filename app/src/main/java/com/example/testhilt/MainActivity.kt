@@ -1,14 +1,18 @@
 package com.example.testhilt
 
+import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.components.ActivityComponent
+import dagger.hilt.android.qualifiers.ActivityContext
+import dagger.hilt.android.scopes.ActivityScoped
 import javax.inject.Inject
 import javax.inject.Qualifier
 
@@ -16,6 +20,8 @@ import javax.inject.Qualifier
 class MainActivity : AppCompatActivity() {
 
     @Inject lateinit var user:User//定义一个User对象
+
+    @Inject lateinit var user2:User2//定义一个User对象
 
     @Inject lateinit var chinaCar:ChinaCar
 
@@ -47,7 +53,25 @@ class MainActivity : AppCompatActivity() {
         Log.e("TAG", "chinaCarTest2: $chinaCar2Test2")
         chinaCar2Test2.engine.on()      //AmericaEngine on
         chinaCar2Test2.engine.off()     //AmericaEngine off
+
+        user2.name = "user2 name"
+        user2.age = 18
+        user2.showMsg()
+        Log.e("TAG", "user2: $user2")     //user: User(name=朱Bony age30)
     }
+}
+
+/**
+ * ActivityScoped
+ * Scope annotation for bindings that should exist for the life of an activity.
+ * 如果您使用 @ActivityScoped 将 User2的作用域限定为 ActivityComponent。User2的作用域限定为Activity
+ */
+@ActivityScoped
+class User2 @Inject constructor(@ActivityContext val context: Context) {
+    var name: String = ""
+    var age = 0
+    override fun toString() = "User(name=$name age$age)"
+    fun showMsg() = Toast.makeText(context, toString(), Toast.LENGTH_SHORT).show()
 }
 
 @Qualifier
