@@ -74,6 +74,14 @@ class User2 @Inject constructor(@ActivityContext val context: Context) {
     fun showMsg() = Toast.makeText(context, toString(), Toast.LENGTH_SHORT).show()
 }
 
+//创建@Inject 结构的class
+class User @Inject constructor()
+{
+    var name:String=""
+    var age = 0
+    override fun toString()="User(name=$name age$age)"
+}
+
 @Qualifier
 @Retention(AnnotationRetention.RUNTIME)
 annotation class MadeInCN
@@ -89,6 +97,21 @@ class AmericaEngine @Inject constructor():Engine{
     override fun off() {
         Log.e("zrm", "AmericaEngine off")
     }
+}
+
+data class Dog(val name:String)
+
+@Module
+@InstallIn(ActivityComponent::class)
+class DogModule
+{
+    @Provides
+    fun provideDog()=Dog("京巴犬")
+}
+
+interface Engine{
+    fun on()
+    fun off()
 }
 
 @Module
@@ -107,29 +130,6 @@ class CarModule {
     {
         return ChinaCar(AmericaEngine())
     }
-}
-
-data class Dog(val name:String)
-
-@Module
-@InstallIn(ActivityComponent::class)
-class DogModule
-{
-    @Provides
-    fun provideDog()=Dog("京巴犬")
-}
-
-//创建@Inject 结构的class
-class User @Inject constructor()
-{
-    var name:String=""
-    var age = 0
-    override fun toString()="User(name=$name age$age)"
-}
-
-interface Engine{
-    fun on()
-    fun off()
 }
 
 //创建一个继承Engine的类
