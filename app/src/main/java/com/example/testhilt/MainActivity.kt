@@ -1,10 +1,10 @@
 package com.example.testhilt
 
 import android.content.Context
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -16,19 +16,32 @@ import dagger.hilt.android.scopes.ActivityScoped
 import javax.inject.Inject
 import javax.inject.Qualifier
 
+//https://www.jianshu.com/p/f32beb3614e5
+/**
+ * MainActivity上，一定要加入@AndroidEntryPoint
+ * 才能够让当前的Activity知道是调用Hilt
+ */
 @AndroidEntryPoint      //将依赖项注入 Android 类
 class MainActivity : AppCompatActivity() {
 
-    @Inject lateinit var user:User//定义一个User对象
+    @Inject
+    lateinit var user: User//定义一个User对象
 
-    @Inject lateinit var user2:User2//定义一个User对象
+    @Inject
+    lateinit var user2: User2//定义一个User对象
 
-    @Inject lateinit var chinaCar:ChinaCar
+    @Inject
+    lateinit var chinaCar: ChinaCar
 
-    @Inject lateinit var dog:Dog
+    @Inject
+    lateinit var dog: Dog
 
-    @Inject @MadeInCN lateinit var chinaCarTest1:ChinaCar
-    @Inject @MadeInUSA lateinit var chinaCar2Test2:ChinaCar
+    @Inject
+    @MadeInCN
+    lateinit var chinaCarTest1: ChinaCar
+    @Inject
+    @MadeInUSA
+    lateinit var chinaCar2Test2: ChinaCar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,12 +53,12 @@ class MainActivity : AppCompatActivity() {
         Log.e("TAG", "user: $user")     //user: User(name=朱Bony age30)
 
 
-        chinaCar.name="比亚迪"
+        chinaCar.name = "比亚迪"
         chinaCar.engine.on()
         chinaCar.engine.off()
         Log.e("TAG", "chinaCar.name: ${chinaCar.name}")
 
-        Log.e("TAG", "dog.name: "+dog.name )
+        Log.e("TAG", "dog.name: " + dog.name)
 
         Log.e("TAG", "chinaCarTest1: $chinaCarTest1")
         chinaCarTest1.engine.on()       //ChinaEngine on
@@ -75,11 +88,10 @@ class User2 @Inject constructor(@ActivityContext val context: Context) {
 }
 
 //创建@Inject 结构的class
-class User @Inject constructor()
-{
-    var name:String=""
+class User @Inject constructor() {
+    var name: String = ""
     var age = 0
-    override fun toString()="User(name=$name age$age)"
+    override fun toString() = "User(name=$name age$age)"
 }
 
 @Qualifier
@@ -90,26 +102,26 @@ annotation class MadeInCN
 @Retention(AnnotationRetention.RUNTIME)
 annotation class MadeInUSA
 
-class AmericaEngine @Inject constructor():Engine{
+class AmericaEngine @Inject constructor() : Engine {
     override fun on() {
         Log.e("zrm", "AmericaEngine on")
     }
+
     override fun off() {
         Log.e("zrm", "AmericaEngine off")
     }
 }
 
-data class Dog(val name:String)
+data class Dog(val name: String)
 
 @Module
 @InstallIn(ActivityComponent::class)
-class DogModule
-{
+class DogModule {
     @Provides
-    fun provideDog()=Dog("京巴犬")
+    fun provideDog() = Dog("京巴犬")
 }
 
-interface Engine{
+interface Engine {
     fun on()
     fun off()
 }
@@ -119,30 +131,30 @@ interface Engine{
 class CarModule {
     @Provides
     @MadeInCN
-    fun provideChinaCar():ChinaCar
-    {
+    fun provideChinaCar(): ChinaCar {
         return ChinaCar(ChinaEngine())
     }
 
     @Provides
     @MadeInUSA
-    fun provideChinaCar2():ChinaCar
-    {
+    fun provideChinaCar2(): ChinaCar {
         return ChinaCar(AmericaEngine())
     }
 }
 
 //创建一个继承Engine的类
-class ChinaEngine @Inject constructor():Engine{
+class ChinaEngine @Inject constructor() : Engine {
     override fun on() {
         Log.e("zrm", "ChinaEngine on")
     }
+
     override fun off() {
         Log.e("zrm", "ChinaEngine off")
     }
 }
-class ChinaCar @Inject constructor(val engine:Engine){
-    lateinit var name:String
+
+class ChinaCar @Inject constructor(val engine: Engine) {
+    lateinit var name: String
 }
 
 /**
@@ -153,5 +165,5 @@ class ChinaCar @Inject constructor(val engine:Engine){
 @InstallIn(ActivityComponent::class)
 interface MainModule {
     @Binds
-    fun bindEngine(chinaEngine:ChinaEngine):Engine
+    fun bindEngine(chinaEngine: ChinaEngine): Engine
 }
